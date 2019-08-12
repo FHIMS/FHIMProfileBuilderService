@@ -47,6 +47,10 @@ public class StructuredDefinitionProvider implements IResourceProvider {
 
 	FhirContext fhirContext;
 
+	// org.hl7.fhir.StructureDefinition structuredDefinition;
+
+	org.eclipse.uml2.uml.Class theProfile = null;
+
 	/**
 	 * @param servletContext
 	 * @param fhirContext
@@ -70,14 +74,8 @@ public class StructuredDefinitionProvider implements IResourceProvider {
 	@Read()
 	public StructureDefinition getResourceById(@IdParam IdType theId) {
 
-		try {
-			return UMLService.INSTANCE(fhirContext).getStructureDefinition(servletContext, theId.getIdPart());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return UMLService.INSTANCE(fhirContext).StructureDefinitionFromClass(theProfile);
 
-		return null;
 	}
 
 	@Create
@@ -161,13 +159,47 @@ public class StructuredDefinitionProvider implements IResourceProvider {
 
 		retVal.addParameter("ID", "SOMEID");
 
-		GenerateImplementation generateImplementation = new GenerateImplementation();
+		// l
 
 		;
-		String[] references = null;
+		String[] references = { "AllergyObservationContainer" };
 		try {
+
+			UMLService.INSTANCE(fhirContext).umlService.loadModels(UMLService.INSTANCE(fhirContext), servletContext);
+
+			GenerateImplementation generateImplementation = new GenerateImplementation();
+
+			generateImplementation.setFhimPackage(UMLService.INSTANCE(fhirContext).fhimPackage);
+			generateImplementation.setBasePackage(UMLService.INSTANCE(fhirContext).fhirPackage);
+			generateImplementation.setTargetModel(UMLService.INSTANCE(fhirContext).targetPackage);
+
+			// generateImplementation.setTarget("FHIM2FHIR-US-Core.uml");
+			// generateImplementation.setBase("FHIR-Core.uml");
+
+			// generateImplementation.setResourceSet(UMLService.INSTANCE(fhirContext).getResourceSet());
+
+			// generateImplementation.set
+			// generateImplementation.setr
+
+			// generateImplementation.initialize(UMLService.INSTANCE(fhirContext).getFhirProfile(servletContext));
 			generateImplementation.go(references);
-		} catch (IOException e) {
+
+			// ModelExporter umlExporter = new ModelExporter();
+
+			theProfile = (org.eclipse.uml2.uml.Class) UMLService.INSTANCE(fhirContext).targetPackage.getNestedPackage(
+				"Profiles").getOwnedMember("IntoleranceCondition");
+
+			// structuredDefinition = umlExporter.createStrucureDefinition(theProfile);
+
+			// for (UMLService.INSTANCE(fhirContext).targetPackage.getNestedPackage("Profiles").getOwnedComments())
+			// {
+			//
+			// }
+
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

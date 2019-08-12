@@ -23,7 +23,7 @@ public class TestFHIMServer {
 
 	private static FhirContext ourCtx = FhirContext.forR4();
 
-	private static int ourPort = 8080;
+	private static int ourPort = 8180;
 
 	private static String HOST = "http://localhost:";
 
@@ -173,6 +173,11 @@ public class TestFHIMServer {
 		Class theOutputParameterType;
 		Parameters foo = client.operation().onInstance(new IdDt("StructureDefinition", "1")).named(
 			"$generate").withNoParameters(Parameters.class).execute();
+
+		StructureDefinition foo2 = client.read().resource(StructureDefinition.class).withId(
+			"reactionobservation").execute();
+
+		System.out.println(ourCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(foo2));
 
 	}
 
